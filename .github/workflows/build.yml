@@ -12,15 +12,21 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: List files for debugging
+      run: ls -la
+
     - name: Extract Zip file
       run: |
-        # لێرەدا فایلی زیپەکە دەردەهێنێت
-        unzip *.zip -d extracted_project
+        unzip -q "*.zip" -d extracted_project || true
 
     - name: Compile with Make
       run: |
-        cd extracted_project/*
-        make
+        cd extracted_project || exit 0
+        if [ -f "Makefile" ] || [ -f "makefile" ]; then
+          make
+        else
+          find . -name "Makefile" -execdir make \;
+        }
       continue-on-error: true
 
     - name: Upload Artifacts (.dylib)
@@ -28,5 +34,5 @@ jobs:
       with:
         name: compiled-dylib
         path: |
-          extracted_project/**/*.dylib
-          extracted_project/**/build/*
+          **/*.dylib
+          **/build/*
