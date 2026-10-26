@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-13
 
     steps:
     - name: Checkout repository
@@ -26,7 +26,7 @@ jobs:
           make
         else
           find . -name "Makefile" -execdir make \;
-        }
+        fi
       continue-on-error: true
 
     - name: Upload Artifacts (.dylib)
