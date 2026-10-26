@@ -1,0 +1,32 @@
+name: Build iOS Library
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Extract Zip file
+      run: |
+        # لێرەدا فایلی زیپەکە دەردەهێنێت
+        unzip *.zip -d extracted_project
+
+    - name: Compile with Make
+      run: |
+        cd extracted_project/*
+        make
+      continue-on-error: true
+
+    - name: Upload Artifacts (.dylib)
+      uses: actions/upload-artifact@v4
+      with:
+        name: compiled-dylib
+        path: |
+          extracted_project/**/*.dylib
+          extracted_project/**/build/*
